@@ -13,15 +13,22 @@ namespace PhotonServerClient
         /// <summary>
         /// 生成
         /// </summary>
-        /// <returns>PhotonConnectionインスタンス</returns>
-        public static PhotonConnection Create()
+        /// <param name="protocol">接続プロトコル</param>
+        /// <returns>PhotonConnectionオブジェクト</returns>
+        public static PhotonConnection Create(ConnectionProtocol protocol)
         {
             var obj = new GameObject("PhotonConnection");
             DontDestroyOnLoad(obj);
 
             var connection = obj.AddComponent<PhotonConnection>();
+            connection.peer = new PhotonPeer(connection, protocol);
             return connection;
         }
+
+        /// <summary>
+        /// Peer
+        /// </summary>
+        private PhotonPeer peer = null;
 
         public void DebugReturn(DebugLevel level, string message)
         {
