@@ -1,3 +1,16 @@
-﻿{
-	"name": "PhotonServerClientFramework"
+{
+    "name": "PhotonServerClientFramework",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UniRx",
+        "UniTask"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
