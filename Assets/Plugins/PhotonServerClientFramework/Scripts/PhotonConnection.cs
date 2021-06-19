@@ -75,13 +75,53 @@ namespace PhotonServerClient
             }
         }
 
+        #region Event
+
         public void OnEvent(EventData eventData)
         {
         }
 
+        #endregion
+
+        #region OperationRequest and Response
+
+        Dictionary<byte, AsyncReactiveProperty<Dictionary<byte, object>>> responses = new Dictionary<byte, AsyncReactiveProperty<Dictionary<byte, object>>>();
+
+        /// <summary>
+        /// リクエスト送信
+        /// </summary>
+        /// <param name="requestOperationCode">リクエストオペレーションコード</param>
+        /// <param name="paramDic">パラメータDictionary</param>
+        /// <param name="responseOpretaionCode">レスポンスオペレーションコード</param>
+        public UniTask<Dictionary<byte, object>> SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic, byte responseOperationCode)
+        {
+            var prop = new AsyncReactiveProperty<Dictionary<byte, object>>(new Dictionary<byte, object>());
+            prop.AddTo(this.GetCancellationTokenOnDestroy());
+            responses.Add(responseOperationCode, prop);
+            peer.OpCustom(requestOperationCode, paramDic, false);
+            return prop.WaitAsync();
+        }
+
+        /// <summary>
+        /// リクエスト送信
+        /// ※投げっぱなしでレスポンスが存在しないパターンで使用する
+        /// </summary>
+        /// <param name="requestOperationCode">リクエストオペレーションコード</param>
+        /// <param name="paramDic">パラメータDictionary</param>
+        public void SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic)
+        {
+            peer.OpCustom(requestOperationCode, paramDic, false);
+        }
+
         public void OnOperationResponse(OperationResponse operationResponse)
         {
+            if (responses.ContainsKey(operationResponse.OperationCode))
+            {
+                responses[operationResponse.OperationCode].Value = operationResponse.Parameters;
+            }
         }
+
+        #endregion
 
         #region Connect and Disconnect
 
