@@ -43,6 +43,16 @@ public class TestClient : MonoBehaviour
                       Debug.Log("Connection Success!");
                       await UniTask.Delay(1000);
 
+                      // イベントのSubscribe
+                      // TODO:Connect前でもSubscribeできるように修正する
+                      client.GetEventObservable((byte)EventCode.ItemSubscribed)
+                            .Subscribe(eventCode =>
+                            {
+                                var itemId = eventCode.Parameters[(byte)ParameterCode.ItemId];
+                                Debug.Log(string.Format("ItemID:{0} Subscribe.", itemId));
+                            })
+                            .AddTo(gameObject);
+
                       // Request/Response
                       var paramDic = new Dictionary<byte, object>
                                     {
