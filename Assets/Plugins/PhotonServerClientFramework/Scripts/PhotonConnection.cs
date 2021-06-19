@@ -97,7 +97,10 @@ namespace PhotonServerClient
 
         public void OnEvent(EventData eventData)
         {
-            Debug.Log("OnEvent:" + eventData.Code);
+            if (events.ContainsKey(eventData.Code))
+            {
+                events[eventData.Code].OnNext(eventData);
+            }
         }
 
         #endregion
