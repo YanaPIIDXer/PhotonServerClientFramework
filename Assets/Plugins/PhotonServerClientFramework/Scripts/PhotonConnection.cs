@@ -17,14 +17,16 @@ namespace PhotonServerClient
         /// 生成
         /// </summary>
         /// <param name="protocol">接続プロトコル</param>
+        /// <param name="eventCallback">イベントコールバックインタフェース</param>
         /// <returns>PhotonConnectionオブジェクト</returns>
-        public static PhotonConnection Create(ConnectionProtocol protocol)
+        public static PhotonConnection Create(ConnectionProtocol protocol, IEventCallback eventCallback)
         {
             var obj = new GameObject("PhotonConnection");
             DontDestroyOnLoad(obj);
 
             var connection = obj.AddComponent<PhotonConnection>();
             connection.peer = new PhotonPeer(connection, protocol);
+            connection.eventCallback = eventCallback;
             return connection;
         }
 
@@ -79,28 +81,11 @@ namespace PhotonServerClient
 
         #region Event
 
-        private Dictionary<byte, Subject<EventData>> events = new Dictionary<byte, Subject<EventData>>();
-
-        /// <summary>
-        /// Event受信時のObservableを取得
-        /// </summary>
-        /// <param name="eventCode">イベントコード</param>
-        /// <returns>Observable</returns>
-        public IObservable<EventData> GetEventObservable(byte eventCode)
-        {
-            if (!events.ContainsKey(eventCode))
-            {
-                events.Add(eventCode, new Subject<EventData>());
-            }
-            return events[eventCode];
-        }
+        private IEventCallback eventCallback = null;
 
         public void OnEvent(EventData eventData)
         {
-            if (events.ContainsKey(eventData.Code))
-            {
-                events[eventData.Code].OnNext(eventData);
-            }
+            eventCallback.OnEvent(eventData);
         }
 
         #endregion

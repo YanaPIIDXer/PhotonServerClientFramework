@@ -10,9 +10,20 @@ using System;
 namespace PhotonServerClient
 {
     /// <summary>
+    /// イベントコールバック
+    /// </summary>
+    public interface IEventCallback
+    {
+        /// <summary>
+        /// イベント発生
+        /// </summary>
+        /// <param name="eventData">イベントデータ</param>
+        void OnEvent(EventData eventData);
+    }
+    /// <summary>
     /// クライアントクラス
     /// </summary>
-    public class PhotonClient
+    public class PhotonClient : IEventCallback
     {
         /// <summary>
         /// 接続オブジェクト
@@ -28,7 +39,7 @@ namespace PhotonServerClient
         public async UniTask Connect(string host, string applicationName, ConnectionProtocol protocol, CancellationToken token = default)
         {
             Disconnect();   // 一旦切断
-            connection = PhotonConnection.Create(protocol);
+            connection = PhotonConnection.Create(protocol, this);
 
             var connTask = UniTask.WhenAny(
                 connection.OnConnectedAsync.AsAsyncUnitUniTask(),
@@ -76,6 +87,8 @@ namespace PhotonServerClient
             connection.SendOperationRequest(requestOperationCode, paramDic);
         }
 
+        private Dictionary<byte, Subject<EventData>> events = new Dictionary<byte, Subject<EventData>>();
+
         /// <summary>
         /// Event受信時のObservableを取得
         /// </summary>
@@ -83,8 +96,23 @@ namespace PhotonServerClient
         /// <returns>Observable</returns>
         public IObservable<EventData> GetEventObservable(byte eventCode)
         {
-            if (connection == null) { return null; }
-            return connection.GetEventObservable(eventCode);
+            if (!events.ContainsKey(eventCode))
+            {
+                events.Add(eventCode, new Subject<EventData>());
+            }
+            return events[eventCode];
+        }
+
+        /// <summary>
+        /// イベント発生
+        /// </summary>
+        /// <param name="eventData">イベントデータ</param>
+        public void OnEvent(EventData eventData)
+        {
+            if (events.ContainsKey(eventData.Code))
+            {
+                events[eventData.Code].OnNext(eventData);
+            }
         }
 
         /// <summary>

@@ -29,6 +29,15 @@ public class TestClient : MonoBehaviour
         PhotonPeer.RegisterType(typeof(Vector), (byte)Photon.MmoDemo.Common.Protocol.CustomTypeCodes.Vector, Photon.MmoDemo.Common.Protocol.SerializeVector, Photon.MmoDemo.Common.Protocol.DeserializeVector);
         PhotonPeer.RegisterType(typeof(BoundingBox), (byte)Photon.MmoDemo.Common.Protocol.CustomTypeCodes.BoundingBox, Photon.MmoDemo.Common.Protocol.SerializeBoundingBox, Photon.MmoDemo.Common.Protocol.DeserializeBoundingBox);
 
+        // イベントのSubscribe
+        client.GetEventObservable((byte)EventCode.ItemSubscribed)
+              .Subscribe(eventCode =>
+              {
+                  var itemId = eventCode.Parameters[(byte)ParameterCode.ItemId];
+                  Debug.Log(string.Format("ItemID:{0} Subscribe.", itemId));
+              })
+              .AddTo(gameObject);
+
         button = GetComponent<Button>();
         button.OnClickAsObservable()
               .Subscribe(async _ =>
@@ -42,16 +51,6 @@ public class TestClient : MonoBehaviour
                       await client.Connect("127.0.0.1:4530", "MMODemo", ConnectionProtocol.Tcp, token);
                       Debug.Log("Connection Success!");
                       await UniTask.Delay(1000);
-
-                      // イベントのSubscribe
-                      // TODO:Connect前でもSubscribeできるように修正する
-                      client.GetEventObservable((byte)EventCode.ItemSubscribed)
-                            .Subscribe(eventCode =>
-                            {
-                                var itemId = eventCode.Parameters[(byte)ParameterCode.ItemId];
-                                Debug.Log(string.Format("ItemID:{0} Subscribe.", itemId));
-                            })
-                            .AddTo(gameObject);
 
                       // Request/Response
                       var paramDic = new Dictionary<byte, object>
