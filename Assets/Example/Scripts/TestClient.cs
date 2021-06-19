@@ -52,6 +52,16 @@ public class TestClient : MonoBehaviour
                                     };
                       var response = await client.SendOperationRequest((byte)OperationCode.CreateWorld, paramDic, (byte)OperationCode.CreateWorld, token);
                       Debug.Log(string.Format("Create World Result:{0}", response.ReturnCode));
+                      paramDic = new Dictionary<byte, object>
+                                {
+                                    { (byte)ParameterCode.WorldName, "World" },
+                                    { (byte)ParameterCode.Username, "Test" },
+                                    { (byte)ParameterCode.Position, new Vector(1.0f, 1.0f, 0.0f) },
+                                    { (byte)ParameterCode.ViewDistanceEnter, new Vector(1.0f, 1.0f, 0.0f) },
+                                    { (byte)ParameterCode.ViewDistanceExit, new Vector(2.0f, 2.0f, 0.0f) }
+                                };
+                      response = await client.SendOperationRequest((byte)OperationCode.EnterWorld, paramDic, (byte)OperationCode.EnterWorld);
+                      Debug.Log(string.Format("Enter World Result:{0}", response.ReturnCode));
                       await UniTask.Delay(1000);
                   }
                   catch (Exception e)
