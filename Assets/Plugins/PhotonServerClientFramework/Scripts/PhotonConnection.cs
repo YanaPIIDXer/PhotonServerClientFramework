@@ -30,6 +30,14 @@ namespace PhotonServerClient
         /// </summary>
         private PhotonPeer peer = null;
 
+        void Update()
+        {
+            if (peer != null)
+            {
+                peer.Service();
+            }
+        }
+
         public void DebugReturn(DebugLevel level, string message)
         {
             switch (level)
