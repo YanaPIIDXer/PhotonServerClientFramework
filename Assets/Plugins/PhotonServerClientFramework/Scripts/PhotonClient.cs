@@ -4,6 +4,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using ExitGames.Client.Photon;
 using System.Threading;
+using UniRx;
 using System;
 
 namespace PhotonServerClient
@@ -73,6 +74,17 @@ namespace PhotonServerClient
             if (connection == null) { return; }
 
             connection.SendOperationRequest(requestOperationCode, paramDic);
+        }
+
+        /// <summary>
+        /// Event受信時のObservableを取得
+        /// </summary>
+        /// <param name="eventCode">イベントコード</param>
+        /// <returns>Observable</returns>
+        public IObservable<EventData> GetEventObservable(byte eventCode)
+        {
+            if (connection == null) { return null; }
+            return connection.GetEventObservable(eventCode);
         }
 
         /// <summary>

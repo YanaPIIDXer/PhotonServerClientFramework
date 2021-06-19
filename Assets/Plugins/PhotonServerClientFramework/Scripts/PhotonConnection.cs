@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using ExitGames.Client.Photon;
 using Cysharp.Threading.Tasks;
+using UniRx;
+using System;
 
 namespace PhotonServerClient
 {
@@ -77,8 +79,25 @@ namespace PhotonServerClient
 
         #region Event
 
+        private Dictionary<byte, Subject<EventData>> events = new Dictionary<byte, Subject<EventData>>();
+
+        /// <summary>
+        /// Event受信時のObservableを取得
+        /// </summary>
+        /// <param name="eventCode">イベントコード</param>
+        /// <returns>Observable</returns>
+        public IObservable<EventData> GetEventObservable(byte eventCode)
+        {
+            if (!events.ContainsKey(eventCode))
+            {
+                events.Add(eventCode, new Subject<EventData>());
+            }
+            return events[eventCode];
+        }
+
         public void OnEvent(EventData eventData)
         {
+            Debug.Log("OnEvent:" + eventData.Code);
         }
 
         #endregion
