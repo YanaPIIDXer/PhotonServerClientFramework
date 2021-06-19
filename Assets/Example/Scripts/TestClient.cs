@@ -38,10 +38,12 @@ public class TestClient : MonoBehaviour
 
                   try
                   {
+                      // Connect
                       await client.Connect("127.0.0.1:4530", "MMODemo", ConnectionProtocol.Tcp, token);
                       Debug.Log("Connection Success!");
                       await UniTask.Delay(1000);
 
+                      // Request/Response
                       var paramDic = new Dictionary<byte, object>
                                     {
                                         { (byte)ParameterCode.WorldName, "World" },
@@ -50,6 +52,7 @@ public class TestClient : MonoBehaviour
                                     };
                       var response = await client.SendOperationRequest((byte)OperationCode.CreateWorld, paramDic, (byte)OperationCode.CreateWorld, token);
                       Debug.Log(string.Format("Create World Result:{0}", response.ReturnCode));
+                      await UniTask.Delay(1000);
                   }
                   catch (Exception e)
                   {
