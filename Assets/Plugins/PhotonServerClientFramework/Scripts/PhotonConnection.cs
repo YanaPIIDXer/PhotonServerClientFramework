@@ -30,6 +30,14 @@ namespace PhotonServerClient
         /// </summary>
         private PhotonPeer peer = null;
 
+        /// <summary>
+        /// 切断
+        /// </summary>
+        public void Disconnect()
+        {
+            Destroy(gameObject);
+        }
+
         void Update()
         {
             if (peer != null)
