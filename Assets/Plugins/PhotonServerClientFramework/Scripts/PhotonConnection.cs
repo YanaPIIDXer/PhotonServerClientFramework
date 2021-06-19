@@ -85,7 +85,7 @@ namespace PhotonServerClient
 
         #region OperationRequest and Response
 
-        Dictionary<byte, AsyncReactiveProperty<Dictionary<byte, object>>> responses = new Dictionary<byte, AsyncReactiveProperty<Dictionary<byte, object>>>();
+        Dictionary<byte, AsyncReactiveProperty<OperationResponse>> responses = new Dictionary<byte, AsyncReactiveProperty<OperationResponse>>();
 
         /// <summary>
         /// リクエスト送信
@@ -93,9 +93,9 @@ namespace PhotonServerClient
         /// <param name="requestOperationCode">リクエストオペレーションコード</param>
         /// <param name="paramDic">パラメータDictionary</param>
         /// <param name="responseOpretaionCode">レスポンスオペレーションコード</param>
-        public UniTask<Dictionary<byte, object>> SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic, byte responseOperationCode)
+        public UniTask<OperationResponse> SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic, byte responseOperationCode)
         {
-            var prop = new AsyncReactiveProperty<Dictionary<byte, object>>(new Dictionary<byte, object>());
+            var prop = new AsyncReactiveProperty<OperationResponse>(null);
             prop.AddTo(this.GetCancellationTokenOnDestroy());
             responses.Add(responseOperationCode, prop);
             peer.OpCustom(requestOperationCode, paramDic, false);
@@ -117,7 +117,7 @@ namespace PhotonServerClient
         {
             if (responses.ContainsKey(operationResponse.OperationCode))
             {
-                responses[operationResponse.OperationCode].Value = operationResponse.Parameters;
+                responses[operationResponse.OperationCode].Value = operationResponse;
             }
         }
 

@@ -52,7 +52,7 @@ namespace PhotonServerClient
         /// <param name="paramDic">パラメータDictionary</param>
         /// <param name="responseOperationCode">レスポンスオペレーションコード</param>
         /// <returns>レスポンスパラメータ</returns>
-        public async UniTask<Dictionary<byte, object>> SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic, byte responseOperationCode, CancellationToken token = default)
+        public async UniTask<OperationResponse> SendOperationRequest(byte requestOperationCode, Dictionary<byte, object> paramDic, byte responseOperationCode, CancellationToken token = default)
         {
             if (connection == null) { return null; }
 
