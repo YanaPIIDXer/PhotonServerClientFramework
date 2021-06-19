@@ -9,5 +9,8 @@ PhotonServerと接続するクライアントの実装を、[UniRx](https://gith
 MIT Lisence
 
 ## Dependency
-[UniRx](https://github.com/neuecc/UniRx)  
-[UniTask](https://github.com/Cysharp/UniTask)  
+
+- [UniRx](https://github.com/neuecc/UniRx)  
+- [UniTask](https://github.com/Cysharp/UniTask)  
+- Photon3Unity3D
+  - PhotonServer SDKのlibディレクトリ内にDLLが入っているので、それをUnityのプロジェクトに導入してください。
