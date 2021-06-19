@@ -34,13 +34,15 @@ public class TestClient : MonoBehaviour
                   {
                       await client.Connect("127.0.0.1:4530", "MMODemo", ConnectionProtocol.Tcp);
                       Debug.Log("Connection Success!");
-
-                      client.Disconnect();
-                      Debug.Log("Disconnected.");
                   }
                   catch (Exception e)
                   {
                       Debug.LogError(e.Message);
+                  }
+                  finally
+                  {
+                      client.Disconnect();
+                      Debug.Log("Disconnected.");
                   }
 
                   button.interactable = true;
