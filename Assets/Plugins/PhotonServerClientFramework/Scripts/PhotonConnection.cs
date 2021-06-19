@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ExitGames.Client.Photon;
+using Cysharp.Threading.Tasks;
 
 namespace PhotonServerClient
 {
@@ -31,6 +32,16 @@ namespace PhotonServerClient
         private PhotonPeer peer = null;
 
         /// <summary>
+        /// 接続
+        /// </summary>
+        /// <param name="host">ホスト</param>
+        /// <param name="applicationName">アプリケーション名</param>
+        public void Connect(string host, string applicationName)
+        {
+            peer.Connect(host, applicationName);
+        }
+
+        /// <summary>
         /// 切断
         /// </summary>
         public void Disconnect()
@@ -40,10 +51,7 @@ namespace PhotonServerClient
 
         void Update()
         {
-            if (peer != null)
-            {
-                peer.Service();
-            }
+            peer.Service();
         }
 
         public void DebugReturn(DebugLevel level, string message)
@@ -75,8 +83,64 @@ namespace PhotonServerClient
         {
         }
 
+        #region Connect and Disconnect
+
+        private AsyncReactiveProperty<AsyncUnit> OnConnectedProp = null;
+
+        public UniTask OnConnectedAsync
+        {
+            get
+            {
+                if (OnConnectedProp == null)
+                {
+                    OnConnectedProp = new AsyncReactiveProperty<AsyncUnit>(AsyncUnit.Default);
+                    OnConnectedProp.AddTo(this.GetCancellationTokenOnDestroy());
+                }
+                return OnConnectedProp.WaitAsync();
+            }
+        }
+
+        private AsyncReactiveProperty<AsyncUnit> OnDisconnectedProp = null;
+
+        public UniTask OnDisconnectedAsync
+        {
+            get
+            {
+                if (OnDisconnectedProp == null)
+                {
+                    OnDisconnectedProp = new AsyncReactiveProperty<AsyncUnit>(AsyncUnit.Default);
+                    OnDisconnectedProp.AddTo(this.GetCancellationTokenOnDestroy());
+                }
+                return OnDisconnectedProp.WaitAsync();
+            }
+        }
+
         public void OnStatusChanged(StatusCode statusCode)
         {
+            switch (statusCode)
+            {
+                case StatusCode.Connect:
+
+                    if (OnConnectedProp != null)
+                    {
+                        OnConnectedProp.Value = AsyncUnit.Default;
+                    }
+                    break;
+
+                case StatusCode.Disconnect:
+                case StatusCode.DisconnectByServer:
+                case StatusCode.DisconnectByServerLogic:
+                case StatusCode.DisconnectByServerUserLimit:
+                case StatusCode.TimeoutDisconnect:
+
+                    if (OnDisconnectedProp != null)
+                    {
+                        OnDisconnectedProp.Value = AsyncUnit.Default;
+                    }
+                    break;
+            }
         }
+
+        #endregion
     }
 }
