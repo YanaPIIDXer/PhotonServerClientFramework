@@ -1,0 +1,12 @@
+{
+    "name": "com.yanapiidxer.photonserverclientframework",
+    "displayName": "PhotonServerClientFramework",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "PhotonServerに接続する為のフレームワーク",
+    "license": "MIT",
+    "dependencies": {
+        "com.cysharp.unitask": "2.2.5",
+        "com.neuecc.unirx": "7.1.0"
+    }
+}
