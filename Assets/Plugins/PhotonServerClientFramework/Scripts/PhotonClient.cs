@@ -20,6 +20,7 @@ namespace PhotonServerClient
         /// <param name="eventData">イベントデータ</param>
         void OnEvent(EventData eventData);
     }
+
     /// <summary>
     /// クライアントクラス
     /// </summary>
@@ -52,8 +53,7 @@ namespace PhotonServerClient
 
             if (idx != 0)
             {
-                // TODO:自前のException定義する？
-                throw new Exception("Connection Failed.");
+                throw new ConnectionFailedException();
             }
         }
 
