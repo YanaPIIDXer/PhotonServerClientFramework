@@ -76,6 +76,18 @@ namespace PhotonServerClient
 
         /// <summary>
         /// リクエスト送信
+        /// ※同じオペレーションコードでレスポンスを待ち受けるパターンで使用する
+        /// </summary>
+        /// <param name="operationCode">オペレーションコード</param>
+        /// <param name="paramDic">パラメータDictionary</param>
+        /// <returns>レスポンスパラメータ</returns>
+        public UniTask<OperationResponse> SendOperationRequest(byte operationCode, Dictionary<byte, object> paramDic, CancellationToken token = default)
+        {
+            return SendOperationRequest(operationCode, paramDic, operationCode, token);
+        }
+
+        /// <summary>
+        /// リクエスト送信
         /// ※投げっぱなしでレスポンスが存在しないパターンで使用する
         /// </summary>
         /// <param name="requestOperationCode">リクエストオペレーションコード</param>

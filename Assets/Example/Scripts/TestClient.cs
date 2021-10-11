@@ -69,7 +69,7 @@ public class TestClient : MonoBehaviour
                                     { (byte)ParameterCode.ViewDistanceEnter, new Vector(1.0f, 1.0f, 0.0f) },
                                     { (byte)ParameterCode.ViewDistanceExit, new Vector(2.0f, 2.0f, 0.0f) }
                                 };
-                      response = await client.SendOperationRequest((byte)OperationCode.EnterWorld, paramDic, (byte)OperationCode.EnterWorld);
+                      response = await client.SendOperationRequest((byte)OperationCode.EnterWorld, paramDic, token);
                       Debug.Log(string.Format("Enter World Result:{0}", response.ReturnCode));
                       await UniTask.Delay(1000);
                   }
